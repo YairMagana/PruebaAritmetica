@@ -31,6 +31,11 @@
             txtbInput = new TextBox();
             txtbResult = new TextBox();
             btnCalcular = new Button();
+            textBox1 = new TextBox();
+            textBox2 = new TextBox();
+            button1 = new Button();
+            textBox3 = new TextBox();
+            button2 = new Button();
             SuspendLayout();
             // 
             // txtbInput
@@ -60,11 +65,57 @@
             btnCalcular.UseVisualStyleBackColor = true;
             btnCalcular.Click += btnCalcular_Click;
             // 
+            // textBox1
+            // 
+            textBox1.Location = new Point(22, 268);
+            textBox1.Name = "textBox1";
+            textBox1.Size = new Size(338, 23);
+            textBox1.TabIndex = 3;
+            // 
+            // textBox2
+            // 
+            textBox2.Location = new Point(22, 295);
+            textBox2.Name = "textBox2";
+            textBox2.Size = new Size(338, 23);
+            textBox2.TabIndex = 4;
+            // 
+            // button1
+            // 
+            button1.Location = new Point(380, 280);
+            button1.Name = "button1";
+            button1.Size = new Size(75, 23);
+            button1.TabIndex = 5;
+            button1.Text = "button1";
+            button1.UseVisualStyleBackColor = true;
+            button1.Click += button1_Click;
+            // 
+            // textBox3
+            // 
+            textBox3.Location = new Point(22, 324);
+            textBox3.Name = "textBox3";
+            textBox3.Size = new Size(338, 23);
+            textBox3.TabIndex = 6;
+            // 
+            // button2
+            // 
+            button2.Location = new Point(503, 295);
+            button2.Name = "button2";
+            button2.Size = new Size(75, 51);
+            button2.TabIndex = 7;
+            button2.Text = "Test Functions";
+            button2.UseVisualStyleBackColor = true;
+            button2.Click += button2_Click;
+            // 
             // Form1
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(626, 379);
+            Controls.Add(button2);
+            Controls.Add(textBox3);
+            Controls.Add(button1);
+            Controls.Add(textBox2);
+            Controls.Add(textBox1);
             Controls.Add(btnCalcular);
             Controls.Add(txtbResult);
             Controls.Add(txtbInput);
@@ -79,5 +130,10 @@
         private TextBox txtbInput;
         private TextBox txtbResult;
         private Button btnCalcular;
+        private TextBox textBox1;
+        private TextBox textBox2;
+        private Button button1;
+        private TextBox textBox3;
+        private Button button2;
     }
 }

@@ -6,17 +6,17 @@ using BinaryExpression = NCalc.Domain.BinaryExpression;
 using Expression = NCalc.Expression;
 using UnaryExpression = NCalc.Domain.UnaryExpression;
 
-public class CustomVisitor : ILogicalExpressionVisitor<double>
+public class CustomVisitor : ILogicalExpressionVisitor<decimal>
 {
-    public double Visit(TernaryExpression expression)
+    public decimal Visit(TernaryExpression expression)
     {
         throw new NotImplementedException();
     }
 
-    public double Visit(BinaryExpression expression)
+    public decimal Visit(BinaryExpression expression)
     {
-        double left = expression.LeftExpression.Accept(this);
-        double right = expression.RightExpression.Accept(this);
+        decimal left = expression.LeftExpression.Accept(this);
+        decimal right = expression.RightExpression.Accept(this);
 
         return expression.Type switch
         {
@@ -25,14 +25,14 @@ public class CustomVisitor : ILogicalExpressionVisitor<double>
             BinaryExpressionType.Times => left * right,
             BinaryExpressionType.Div => left / right,
             BinaryExpressionType.Modulo => left % right,
-            BinaryExpressionType.Exponentiation => Math.Pow(left, right),
+            //BinaryExpressionType.Exponentiation => Math.Pow(left, right),
             _ => throw new NotSupportedException($"Operación no soportada: {expression.Type}")
         };
     }
 
-    public double Visit(UnaryExpression expression)
+    public decimal Visit(UnaryExpression expression)
     {
-        double operand = expression.Expression.Accept(this);
+        decimal operand = expression.Expression.Accept(this);
 
         return expression.Type switch
         {
@@ -42,34 +42,34 @@ public class CustomVisitor : ILogicalExpressionVisitor<double>
         };
     }
 
-    public double Visit(ValueExpression expression)
+    public decimal Visit(ValueExpression expression)
     {
-        if (double.TryParse(expression.Value.ToString(), out double result))
+        if (decimal.TryParse(expression.Value?.ToString(), out decimal result))
         {
             return result;
         }
         throw new NotSupportedException("Tipo de valor no soportado (ValueExpression)");
     }
 
-    public double Visit(Function function)
+    public decimal Visit(Function function)
     {
         throw new NotImplementedException();
     }
 
-    public double Visit(Identifier identifier)
+    public decimal Visit(Identifier identifier)
     {
         if (identifier.Name.Equals("pi", StringComparison.OrdinalIgnoreCase))
         {
-            return Math.PI;
+            return Decimal.Parse(Math.PI.ToString());
         }
         else if (identifier.Name.Equals("e", StringComparison.OrdinalIgnoreCase))
         {
-            return Math.E;
+            return Decimal.Parse(Math.E.ToString());
         }
         throw new NotSupportedException($"Identificador no soportado: {identifier.Name}");
     }
 
-    public double Visit(LogicalExpressionList list)
+    public decimal Visit(LogicalExpressionList list)
     {
         throw new NotImplementedException();
     }
@@ -90,7 +90,7 @@ namespace PruebaAritmetica.Clases
                 var logicalExpression = LogicalExpressionParser.Parse(logicalExpressionContext);
 
                 // Evaluar la expresión usando el visitante personalizado
-                double resultado = logicalExpression.Accept(visitor);
+                decimal resultado = logicalExpression.Accept(visitor);
 
                 return resultado.ToString();
             }
