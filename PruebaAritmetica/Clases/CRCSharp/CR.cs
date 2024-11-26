@@ -372,9 +372,8 @@ namespace PruebaAritmetica.Clases.CRCSharp
         private static readonly BigInteger scaled_4 = new BigInteger(64);
         public CR ln()
         {
-            int low_prec = -4;
-            BigInteger rough_appr = get_appr(low_prec);
-            if (rough_appr.Sign < big0) throw new ArithmeticException();
+            BigInteger rough_appr = get_appr(-4);
+            if (rough_appr.Sign < BigInteger.Zero) throw new ArithmeticException("ln(negative)");
             if (rough_appr <= low_ln_limit)
                 return inverse().ln().negate();
             if (rough_appr >= high_ln_limit)
@@ -388,7 +387,7 @@ namespace PruebaAritmetica.Clases.CRCSharp
                 {
                     int extra_bits = (int)rough_appr.GetBitLength() - 3;
                     CR scaled_result = shiftRight(extra_bits).ln();
-                    return scaled_result.add(valueOf(extra_bits).multiply(ln2()));
+                    return scaled_result.add(valueOf(extra_bits).multiply(ln2));
                 }
             }
             return simple_ln();
@@ -511,8 +510,60 @@ namespace PruebaAritmetica.Clases.CRCSharp
         {
             try
             {
+                int point_pos;
+
+                // Consideraciones para el manejo de número en notación científica
+                if (s.Contains("E"))
+                {
+                    bool negative = false;
+                    if (s[0] == '-')
+                    {
+                        negative = true;
+                        s = s.Substring(1);
+                    }
+
+                    string sn;
+                    string[] parts = s.Split('E');
+                    if (parts.Length != 2)
+                        throw new FormatException("Error al convertir el número de notación científica");
+                    // Encontar el punto decimal
+                    point_pos = parts[0].IndexOf('.');
+
+                    // Recorrer el punto decimal tantas posiciónes como indique el exponente
+                    int exponent = int.Parse(parts[1]);
+                    // Exponente positivo
+                    if (exponent > 0)
+                    {
+                        // Contar los dígitos después del punto decimal
+                        int fraction_len = parts[0].Length - point_pos - 1;
+                        // Si el exponente es mayor que la cantidad de dígitos después del punto decimal agregar ceros
+                        if (exponent > fraction_len)
+                            sn = parts[0].Substring(0, point_pos) + parts[0].Substring(point_pos + 1) + new string('0', exponent - fraction_len);
+                        // Si el exponente es menor que la cantidad de dígitos después del punto decimal mover el punto decimal
+                        else
+                            sn = parts[0].Substring(0, point_pos) + parts[0].Substring(point_pos + 1, exponent) + "." + parts[0].Substring(point_pos + 1 + exponent);
+                    }
+                    // Exponente negativo
+                    else if (exponent < 0)
+                    {
+                        // Contar los dígitos antes del punto decimal
+                        int whole_len = point_pos;
+                        // Si el exponente es mayor que la cantidad de dígitos antes del punto decimal agregar ceros
+                        if (-exponent > whole_len)
+                            sn = "0." + new string('0', -exponent - whole_len) + parts[0].Substring(0, point_pos) + parts[0].Substring(point_pos + 1);
+                        // Si el exponente es menor que la cantidad de dígitos antes del punto decimal mover el punto decimal
+                        else
+                            sn = parts[0].Substring(0, point_pos + exponent) + "." + parts[0].Substring(point_pos + exponent, -exponent) + parts[0].Substring(point_pos + 1);
+                    }
+                    else
+                        sn = parts[0];
+
+                    s = negative ? "-" + sn : sn;
+                }
+
+
                 int len = s.Length;
-                int start_pos = 0, point_pos;
+                int start_pos = 0;
                 string fraction;
                 while (s[start_pos] == ' ') ++start_pos;
                 while (s[len - 1] == ' ') --len;
@@ -580,18 +631,13 @@ namespace PruebaAritmetica.Clases.CRCSharp
             }
         }
 
-        public static CR ln2()
-        {
-            CR ten_ninths = valueOf(10).divide(valueOf(9));
-            CR twentyfive_twentyfourths = valueOf(25).divide(valueOf(24));
-            CR eightyone_eightyeths = valueOf(81).divide(valueOf(80));
-
-            CR ln2_1 = valueOf(7).multiply(ten_ninths.simple_ln());
-            CR ln2_2 = valueOf(2).multiply(twentyfive_twentyfourths.simple_ln());
-            CR ln2_3 = valueOf(3).multiply(eightyone_eightyeths.simple_ln());
-
-            return ln2_1.subtract(ln2_2).add(ln2_3);
-        }
+        static CR ten_ninths = valueOf(10).divide(valueOf(9));
+        static CR twentyfive_twentyfourths = valueOf(25).divide(valueOf(24));
+        static CR eightyone_eightyeths = valueOf(81).divide(valueOf(80));
+        static CR ln2_1 = valueOf(7).multiply(ten_ninths.simple_ln());
+        static CR ln2_2 = valueOf(2).multiply(twentyfive_twentyfourths.simple_ln());
+        static CR ln2_3 = valueOf(3).multiply(eightyone_eightyeths.simple_ln());
+        static CR ln2 = ln2_1.subtract(ln2_2).add(ln2_3);
 
         #endregion
 

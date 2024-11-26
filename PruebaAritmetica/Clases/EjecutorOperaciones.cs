@@ -86,7 +86,7 @@ namespace PruebaAritmetica.Clases
                 // Crear una instancia de CustomVisitor
                 var visitor = new CustomVisitor();
 
-                var logicalExpressionContext = new LogicalExpressionParserContext(input, NCalc.ExpressionOptions.None);
+                var logicalExpressionContext = new LogicalExpressionParserContext(input, NCalc.ExpressionOptions.IterateParameters);
                 var logicalExpression = LogicalExpressionParser.Parse(logicalExpressionContext);
 
                 // Evaluar la expresión usando el visitante personalizado

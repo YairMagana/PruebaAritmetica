@@ -19,12 +19,11 @@ namespace PruebaAritmetica.Clases.CRCSharp
             int prec_needed = msd - digits_needed;
             int log_scale_factor = -prec - prec_needed;
             if (log_scale_factor < 0) return big0;
-            BigInteger dividend = big1 << log_scale_factor;
             BigInteger scaled_divisor = _x.get_appr(prec_needed);
             BigInteger abs_scaled_divisor = BigInteger.Abs(scaled_divisor);
-            BigInteger adj_dividend = dividend + (abs_scaled_divisor >> 1);
+            //BigInteger adj_dividend = (big1 << log_scale_factor) + (abs_scaled_divisor >> 1);
 
-            BigInteger result = adj_dividend / abs_scaled_divisor;
+            BigInteger result = ((big1 << log_scale_factor) + (abs_scaled_divisor >> 1)) / abs_scaled_divisor;
             if (scaled_divisor.Sign < 0)
                 return -result;
             else

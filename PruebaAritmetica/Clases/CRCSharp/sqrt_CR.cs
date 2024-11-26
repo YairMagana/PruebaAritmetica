@@ -4,8 +4,8 @@ namespace PruebaAritmetica.Clases.CRCSharp
 {
     internal class sqrt_CR : CR
     {
-        int fp_prec = 50;
-        int fp_op_prec = 60;
+        const int fp_prec = 50;
+        const int fp_op_prec = 60;
 
         private CR _x;
 
@@ -31,27 +31,21 @@ namespace PruebaAritmetica.Clases.CRCSharp
             int result_digits = result_msd - prec;
             if (result_digits > fp_prec)
             {
-                int appr_digits = result_digits / 2 + 6;
-                int appr_prec = result_msd - appr_digits;
-                int prod_prec = 2 * appr_prec;
-                BigInteger op_appr = _x.get_appr(prod_prec);
+                int appr_prec = result_msd - result_digits / 2 + 6;
+                BigInteger op_appr = _x.get_appr(2 * appr_prec);
                 BigInteger last_appr = get_appr(appr_prec);
-                BigInteger prod_prec_scaled_numerator = (last_appr * last_appr) + op_appr;
-                BigInteger scaled_numerator = scale(prod_prec_scaled_numerator, appr_prec - prec);
-                BigInteger shifted_result = scaled_numerator / last_appr;
-                return (shifted_result + big1) >> 1;
+
+                return ((scale(last_appr * last_appr + op_appr, appr_prec - prec) / last_appr) + BigInteger.One) >> 1;
             }
             else
             {
                 int op_prec = (msd - fp_op_prec) & ~1;
-                int working_prec = op_prec - fp_op_prec;
                 BigInteger scaled_bi_appr = _x.get_appr(op_prec) << fp_op_prec;
                 double scaled_appr = (double)scaled_bi_appr;
                 if (scaled_appr < 0d) throw new ArithmeticException("sqrt(negative)");
-                double scaled_fp_sqrt = Math.Sqrt(scaled_appr);
-                BigInteger scaled_sqrt = new BigInteger((long)scaled_fp_sqrt);
-                int shift_count = working_prec / 2 - prec;
-                return shift(scaled_sqrt, shift_count);
+                BigInteger scaled_sqrt = new BigInteger((long)Math.Sqrt(scaled_appr));
+
+                return shift(scaled_sqrt, (op_prec - fp_op_prec) / 2 - prec);
             }
         }
     }

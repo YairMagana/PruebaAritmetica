@@ -28,9 +28,9 @@ namespace PruebaAritmetica.Clases.CRCSharp
                 // ******************************************************
                 // Implementar Token de cancelación
                 // ******************************************************
-                n += 1;
-                current_term = scale(current_term * op_appr, op_prec);
-                current_term /= n;
+                //n += 1;
+                //current_term = scale(current_term * op_appr, op_prec);
+                current_term = scale(current_term * op_appr, op_prec) / ++n;
                 current_sum += current_term;
             }
             return scale(current_sum, calc_precision - prec);
